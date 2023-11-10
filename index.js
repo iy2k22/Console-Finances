@@ -1,3 +1,4 @@
+// stored in an object to make things slightly easier
 const finances = {
   'Jan-2010': 867884,
   'Feb-2010': 984655,
@@ -87,18 +88,28 @@ const finances = {
   'Feb-2017': 671099
 }
 
-const totalMonths = Object.keys(finances).length;
-const total = Object.values(finances).reduce((a, b) => a + b, 0);
-const avgChange = (total / (totalMonths - 1)).toFixed(2);
-const maxIncrease = Math.max(...(Object.values(finances)));
-const maxDecrease = Math.min(...(Object.values(finances)));
-const maxIncMonth = Object.entries(finances).find(([key, value]) => value === maxIncrease)[0];
-const maxDecMonth = Object.entries(finances).find(([key, value]) => value === maxDecrease)[0];
+// stored in variables for increased performance
+const objVals = Object.values(finances);
+const objEntries = Object.entries(finances);
+
+const changes = [];
+
+const totalMonths = objVals.length;
+const total = objVals.reduce((a, b) => a + b, 0);
+
+// find average change
+for (let i = 1; i < totalMonths; ++i) changes.push(objVals[i] - objVals[i - 1]);
+const avgChange = changes.reduce((a, b) => a + b, 0) / (totalMonths - 1);
+
+const maxIncrease = Math.max(...objVals);
+const maxDecrease = Math.min(...objVals);
+const maxIncMonth = objEntries.find(([key, value]) => value === maxIncrease)[0];
+const maxDecMonth = objEntries.find(([key, value]) => value === maxDecrease)[0];
 
 console.log("Financial Analysis");
 console.log("------------------");
 console.log(`Total Months: ${totalMonths}`);
 console.log(`Total: \$${total}`);
-console.log(`Average Change: \$${avgChange}`);
+console.log(`Average Change: \$${avgChange.toFixed(2)}`);
 console.log(`Greatest Increase in Profits/Losses: ${maxIncMonth} (\$${maxIncrease})`);
 console.log(`Greatest Decrease in Profits/Losses: ${maxDecMonth} (\$${maxDecrease})`);
